@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriAI – Your Smart Nutrition Companion</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:#f7faf5;color:#1f2328;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit}
+img,svg{display:block}
+ul{list-style:none}
+
+/* ===== CSS VARIABLES ===== */
+:root{
+  --green:#2d9a4e;
+  --green-light:#e8f5ec;
+  --green-mid:#52b66d;
+  --green-dark:#1e6e38;
+  --accent:#f59e0b;
+  --accent-light:#fef3c7;
+  --blue:#3b82d4;
+  --red:#ef4444;
+  --bg:#f7faf5;
+  --surface:#ffffff;
+  --border:#e5e7eb;
+  --text:#1f2328;
+  --muted:#57606a;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --radius:14px;
+  --radius-sm:8px;
+  --transition:all .2s ease;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#f1f1f1}
+::-webkit-scrollbar-thumb{background:#c1d9c8;border-radius:3px}
+
+/* ===== HEADER / NAV ===== */
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 1.5rem}
+.nav{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.15rem;color:var(--green-dark)}
+.logo svg{flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:.25rem}
+.nav-links a{padding:.45rem .85rem;border-radius:var(--radius-sm);font-size:.9rem;font-weight:500;color:var(--muted);transition:var(--transition)}
+.nav-links a:hover,.nav-links a.active{color:var(--green-dark);background:var(--green-light)}
+.nav-actions{display:flex;gap:.5rem;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1.2rem;border-radius:var(--radius-sm);font-size:.9rem;font-weight:600;border:none;transition:var(--transition);line-height:1}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(45,154,78,.35)}
+.btn-secondary{background:var(--green-light);color:var(--green-dark)}
+.btn-secondary:hover{background:#d4edda;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);color:var(--text)}
+.btn-danger{background:#fee2e2;color:var(--red)}
+.btn-danger:hover{background:#fecaca}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:.4rem;background:none;border:none}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:var(--transition)}
+
+/* ===== SECTIONS ===== */
+.section{display:none;animation:fadeIn .3s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== HERO ===== */
+.hero{background:linear-gradient(135deg,#f0faf3 0%,#e8f5ec 50%,#fef9e7 100%);padding:5rem 1.5rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(45,154,78,.12) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:250px;height:250px;background:radial-gradient(circle,rgba(245,158,11,.1) 0%,transparent 70%);pointer-events:none}
+.hero-content{max-width:700px;margin:0 auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--green-light);color:var(--green-dark);padding:.3rem .9rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.2rem;border:1px solid #c3e6cc}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:var(--green-dark);line-height:1.2;margin-bottom:1rem}
+.hero h1 span{color:var(--green)}
+.hero p{font-size:1.1rem;color:var(--muted);margin-bottom:2rem;max-width:540px;margin-left:auto;margin-right:auto}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.hero-btns .btn{padding:.75rem 1.8rem;font-size:1rem}
+.hero-illustration{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+.food-icon{width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:var(--shadow);transition:var(--transition);border:2px solid var(--border)}
+.food-icon:hover{transform:translateY(-4px) scale(1.05);box-shadow:var(--shadow-lg)}
+
+/* ===== FEATURES ===== */
+.features{padding:4rem 1.5rem;max-width:1200px;margin:0 auto}
+.section-title{text-align:center;margin-bottom:2.5rem}
+.section-title h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;color:var(--green-dark);margin-bottom:.5rem}
+.section-title p{color:var(--muted);font-size:1rem}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+.feature-card{background:var(--surface);border-radius:var(--radius);padding:1.8rem;border:1px solid var(--border);transition:var(--transition);cursor:default}
+.feature-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:#c3e6cc}
+.feature-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1rem}
+.feature-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;color:var(--text)}
+.feature-card p{font-size:.9rem;color:var(--muted);line-height:1.5}
+
+/* ===== CHAT SECTION ===== */
+.chat-section{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.chat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem;flex-wrap:wrap}
+.chat-header h2{font-size:1.3rem;font-weight:700;color:var(--green-dark)}
+.chat-header-actions{display:flex;gap:.5rem}
+.quick-prompts{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.quick-prompt{padding:.4rem .9rem;border-radius:50px;background:var(--green-light);color:var(--green-dark);font-size:.82rem;font-weight:500;border:1px solid #c3e6cc;cursor:pointer;transition:var(--transition)}
+.quick-prompt:hover{background:#d4edda;transform:translateY(-1px)}
+.chat-container{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.chat-messages{height:480px;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.75rem;color:var(--muted);text-align:center}
+.chat-empty svg{opacity:.4}
+.chat-empty h3{font-size:1.1rem;font-weight:600;color:var(--text)}
+.chat-empty p{font-size:.9rem}
+.message{display:flex;gap:.75rem;align-items:flex-start;max-width:85%}
+.message.user{flex-direction:row-reverse;align-self:flex-end}
+.message.ai{align-self:flex-start}
+.avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700}
+.avatar.ai-avatar{background:var(--green-light);color:var(--green-dark);border:2px solid #c3e6cc}
+.avatar.user-avatar{background:var(--blue);color:#fff}
+.message-bubble{padding:.8rem 1.1rem;border-radius:var(--radius);font-size:.92rem;line-height:1.6;word-break:break-word}
+.message.ai .message-bubble{background:var(--green-light);color:var(--text);border-bottom-left-radius:4px}
+.message.user .message-bubble{background:var(--green);color:#fff;border-bottom-right-radius:4px}
+.message-time{font-size:.72rem;color:var(--muted);margin-top:.25rem;text-align:right}
+.message.ai .message-time{text-align:left}
+.typing-indicator{display:flex;align-items:center;gap:.75rem;align-self:flex-start}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:.8rem 1.1rem;background:var(--green-light);border-radius:var(--radius);border-bottom-left-radius:4px}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--green);animation:bounce .8s infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:scale(0.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+.chat-input-area{border-top:1px solid var(--border);padding:1rem;background:var(--surface)}
+.chat-input-row{display:flex;gap:.75rem;align-items:flex-end}
+.chat-input-row textarea{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem 1rem;font-size:.95rem;resize:none;min-height:48px;max-height:140px;transition:var(--transition);background:var(--bg)}
+.chat-input-row textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(45,154,78,.12)}
+.chat-input-row .btn{height:48px;padding:0 1.2rem;flex-shrink:0}
+
+/* ===== MEAL PLANNER ===== */
+.meal-section{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.meal-form-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-group label{font-size:.88rem;font-weight:600;color:var(--text)}
+.form-group select,.form-group input,.form-group textarea{padding:.6rem .9rem;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.92rem;background:var(--bg);transition:var(--transition);color:var(--text)}
+.form-group select:focus,.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(45,154,78,.12)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-full{grid-column:1/-1}
+.meal-result{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;box-shadow:var(--shadow)}
+.meal-result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem}
+.meal-result-header h3{font-size:1.2rem;font-weight:700;color:var(--green-dark)}
+.meal-result-content{font-size:.93rem;line-height:1.8;color:var(--text)}
+.meal-result-content h4{color:var(--green-dark);margin-top:1rem;margin-bottom:.4rem;font-size:1rem}
+.meal-result-content ul{padding-left:1.3rem;list-style:disc}
+.meal-result-content ul li{margin-bottom:.25rem}
+.meal-result-content strong{color:var(--green-dark)}
+.meal-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;gap:1rem;color:var(--muted)}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== NUTRITION GUIDE ===== */
+.guide-section{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem}
+.guide-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;cursor:pointer;transition:var(--transition);text-align:center}
+.guide-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--green)}
+.guide-card:focus{outline:2px solid var(--green);outline-offset:2px}
+.guide-card-icon{font-size:2.2rem;margin-bottom:.75rem}
+.guide-card h3{font-size:1rem;font-weight:700;color:var(--green-dark);margin-bottom:.4rem}
+.guide-card p{font-size:.85rem;color:var(--muted);line-height:1.4}
+
+/* ===== PROFILE / PREFERENCES ===== */
+.profile-section{max-width:700px;margin:0 auto;padding:2rem 1.5rem}
+.profile-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;box-shadow:var(--shadow)}
+.profile-card h2{font-size:1.3rem;font-weight:700;color:var(--green-dark);margin-bottom:1.5rem}
+
+/* ===== SETTINGS SECTION ===== */
+.settings-section{max-width:640px;margin:0 auto;padding:2rem 1.5rem}
+.settings-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.2rem}
+.settings-card h3{font-size:1.1rem;font-weight:700;color:var(--green-dark);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+.settings-row{display:flex;gap:.5rem;align-items:center}
+.settings-row input{flex:1}
+.api-key-wrap{position:relative;display:flex;gap:.5rem;align-items:center}
+.api-key-wrap input{flex:1;padding-right:2.5rem}
+.toggle-key-btn{position:absolute;right:.6rem;background:none;border:none;color:var(--muted);font-size:1rem;padding:.25rem;cursor:pointer}
+.security-notice{background:#fef3c7;border:1px solid #fcd34d;border-radius:var(--radius-sm);padding:.9rem 1rem;font-size:.85rem;color:#92400e;display:flex;gap:.5rem;line-height:1.5;margin-top:.75rem}
+.api-status{display:flex;align-items:center;gap:.5rem;font-size:.88rem;font-weight:600;padding:.5rem .9rem;border-radius:var(--radius-sm)}
+.api-status.success{background:#dcfce7;color:#15803d}
+.api-status.error{background:#fee2e2;color:#b91c1c}
+.api-status.idle{background:var(--bg);color:var(--muted)}
+.checkbox-row{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--text)}
+.checkbox-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--green)}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--surface);border-radius:var(--radius);max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.5rem 0}
+.modal-header h3{font-size:1.2rem;font-weight:700;color:var(--green-dark)}
+.modal-close{background:none;border:none;font-size:1.4rem;color:var(--muted);cursor:pointer;padding:.2rem .4rem;border-radius:4px;transition:var(--transition);line-height:1}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-body{padding:1.2rem 1.5rem 1.5rem;font-size:.93rem;line-height:1.7;color:var(--text)}
+.modal-body h4{color:var(--green-dark);margin-top:1rem;margin-bottom:.4rem;font-size:.98rem}
+.modal-body ul{padding-left:1.3rem;list-style:disc}
+.modal-body ul li{margin-bottom:.2rem}
+
+/* ===== TOAST ===== */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:300;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{background:var(--text);color:#fff;padding:.7rem 1.2rem;border-radius:var(--radius-sm);font-size:.88rem;font-weight:500;opacity:0;transform:translateY(8px);transition:all .3s ease;pointer-events:auto;max-width:340px;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:#15803d}
+.toast.error{background:var(--red)}
+.toast.warning{background:#d97706}
+
+/* ===== AI RESPONSE FORMATTING ===== */
+.ai-content{white-space:pre-wrap;word-break:break-word}
+.ai-content strong{font-weight:700}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:.25rem;z-index:99}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .hero{padding:3rem 1rem 2.5rem}
+  .hero-illustration{gap:1rem}
+  .food-icon{width:58px;height:58px;font-size:1.6rem}
+  .chat-messages{height:360px}
+  .form-grid{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .meal-result{padding:1.2rem}
+}
+@media(max-width:480px){
+  .features-grid{grid-template-columns:1fr}
+  .hero-btns .btn{width:100%;max-width:260px}
+  .modal{border-radius:var(--radius) var(--radius) 0 0;align-self:flex-end;max-height:85vh}
+  .chat-messages{height:300px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header" role="banner">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#" class="logo" onclick="showSection('home')" aria-label="NutriAI Home">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="15" fill="#e8f5ec" stroke="#2d9a4e" stroke-width="1.5"/>
+        <path d="M10 20 Q13 12 16 16 Q19 20 22 12" stroke="#2d9a4e" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="16" cy="10" r="2.5" fill="#2d9a4e"/>
+        <path d="M14 10 Q12 7 13 5" stroke="#52b66d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M18 10 Q20 7 19 5" stroke="#52b66d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      NutriAI
+    </a>
+    <div class="nav-links" id="navLinks" role="menubar">
+      <a href="#" role="menuitem" onclick="showSection('home');closeNav()" class="active" id="nav-home">Home</a>
+      <a href="#" role="menuitem" onclick="showSection('chat');closeNav()" id="nav-chat">AI Chat</a>
+      <a href="#" role="menuitem" onclick="showSection('meal');closeNav()" id="nav-meal">Meal Planner</a>
+      <a href="#" role="menuitem" onclick="showSection('guide');closeNav()" id="nav-guide">Nutrition Guide</a>
+      <a href="#" role="menuitem" onclick="showSection('profile');closeNav()" id="nav-profile">Preferences</a>
+      <a href="#" role="menuitem" onclick="showSection('settings');closeNav()" id="nav-settings">Settings</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-primary" onclick="showSection('chat')" aria-label="Open AI Chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Chat
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ===== HOME SECTION ===== -->
+<main>
+<section id="section-home" class="section active" aria-label="Home">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🌿</span> AI-Powered Nutrition Assistant
+      </div>
+      <h1>Your Smart <span>Nutrition</span> Companion</h1>
+      <p>Ask questions, discover balanced meal ideas, and learn more about nutrition with the power of AI.</p>
+      <div class="hero-btns">
+        <button class="btn btn-primary" onclick="showSection('chat')" aria-label="Start chatting with AI">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Start Chatting
+        </button>
+        <button class="btn btn-secondary" onclick="showSection('meal')" aria-label="Generate a meal plan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3h18v18H3z" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+          Generate Meal
+        </button>
+      </div>
+      <div class="hero-illustration" aria-hidden="true">
+        <div class="food-icon" title="Apple">🍎</div>
+        <div class="food-icon" title="Broccoli">🥦</div>
+        <div class="food-icon" title="Salmon">🐟</div>
+        <div class="food-icon" title="Avocado">🥑</div>
+        <div class="food-icon" title="Grains">🌾</div>
+        <div class="food-icon" title="Nuts">🥜</div>
+        <div class="food-icon" title="Berries">🫐</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="section-title">
+      <h2>Everything You Need for Better Nutrition</h2>
+      <p>AI-powered tools to help you understand food, plan meals, and make healthier choices.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" onclick="showSection('chat')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')showSection('chat')" aria-label="Go to AI Nutrition Chat">
+        <div class="feature-icon" style="background:#e8f5ec">💬</div>
+        <h3>AI Nutrition Chat</h3>
+        <p>Ask any nutrition question and get instant, thoughtful AI-powered answers tailored to your needs.</p>
+      </div>
+      <div class="feature-card" onclick="showSection('meal')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')showSection('meal')" aria-label="Go to Smart Meal Ideas">
+        <div class="feature-icon" style="background:#fef3c7">🍽️</div>
+        <h3>Smart Meal Ideas</h3>
+        <p>Generate personalized meal suggestions based on your preferences, diet, and available ingredients.</p>
+      </div>
+      <div class="feature-card" onclick="showSection('guide')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')showSection('guide')" aria-label="Go to Nutrition Guide">
+        <div class="feature-icon" style="background:#ede9fe">📚</div>
+        <h3>Nutrition Guide</h3>
+        <p>Explore nutrients, learn about healthy food choices, and build a solid nutrition knowledge base.</p>
+      </div>
+      <div class="feature-card" onclick="showSection('profile')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')showSection('profile')" aria-label="Go to Personalized Suggestions">
+        <div class="feature-icon" style="background:#fce7f3">🎯</div>
+        <h3>Personalized Suggestions</h3>
+        <p>Set your preferences once and get recommendations tailored specifically to your lifestyle and goals.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== CHAT SECTION ===== -->
+<section id="section-chat" class="section" aria-label="AI Chat">
+  <div class="chat-section">
+    <div class="chat-header">
+      <h2>🌿 AI Nutrition Chat</h2>
+      <div class="chat-header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="clearChat()" aria-label="Clear conversation" title="Clear conversation">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Clear
+        </button>
+        <button class="btn btn-secondary" onclick="newChat()" aria-label="Start new conversation">New Chat</button>
+      </div>
+    </div>
+    <div class="quick-prompts" role="group" aria-label="Quick prompt suggestions">
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: healthy breakfast idea">Give me a healthy breakfast idea</button>
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: vegetarian dinner">Suggest a vegetarian dinner</button>
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: high protein foods">What foods are high in protein?</button>
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: explain carbohydrates">Explain carbohydrates simply</button>
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: healthy snack ideas">Give me healthy snack ideas</button>
+      <button class="quick-prompt" onclick="sendQuickPrompt(this.textContent)" aria-label="Quick prompt: build a balanced meal">How can I build a balanced meal?</button>
+    </div>
+    <div class="chat-container" role="main">
+      <div class="chat-messages" id="chatMessages" aria-live="polite" aria-label="Conversation messages">
+        <div class="chat-empty" id="chatEmpty">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
+            <circle cx="30" cy="30" r="28" fill="#e8f5ec" stroke="#c3e6cc" stroke-width="1.5"/>
+            <path d="M20 35 Q25 20 30 28 Q35 36 40 22" stroke="#2d9a4e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="30" cy="18" r="4" fill="#2d9a4e" opacity=".7"/>
+          </svg>
+          <h3>Ask NutriAI Anything</h3>
+          <p>Get nutrition advice, meal ideas, and more.<br>Your conversation stays private in this browser session.</p>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <textarea
+            id="chatInput"
+            placeholder="Ask about nutrition, meal ideas, healthy eating..."
+            aria-label="Chat message input"
+            rows="1"
+            onkeydown="handleChatKeydown(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()" aria-label="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MEAL PLANNER SECTION ===== -->
+<section id="section-meal" class="section" aria-label="Meal Planner">
+  <div class="meal-section">
+    <div class="section-title">
+      <h2>🍽️ Smart Meal Planner</h2>
+      <p>Describe what you need and get a personalized meal suggestion with ingredients and steps.</p>
+    </div>
+    <div class="meal-form-card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="mealType">Meal Type</label>
+          <select id="mealType" aria-required="true">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner" selected>Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dietType">Diet</label>
+          <select id="dietType">
+            <option value="No preference">No preference</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Non-vegetarian">Non-vegetarian</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cuisineType">Cuisine</label>
+          <select id="cuisineType">
+            <option value="Any">Any</option>
+            <option value="Indian">Indian</option>
+            <option value="Continental">Continental</option>
+            <option value="Asian">Asian</option>
+            <option value="Mediterranean">Mediterranean</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cookTime">Cooking Time</label>
+          <select id="cookTime">
+            <option value="No preference">No preference</option>
+            <option value="Under 15 minutes">Under 15 minutes</option>
+            <option value="15–30 minutes">15–30 minutes</option>
+            <option value="30–60 minutes">30–60 minutes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="budget">Budget</label>
+          <select id="budget">
+            <option value="No preference">No preference</option>
+            <option value="Budget-friendly">Budget-friendly</option>
+            <option value="Moderate">Moderate</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="servings">Servings</label>
+          <select id="servings">
+            <option value="1">1 person</option>
+            <option value="2" selected>2 people</option>
+            <option value="4">4 people</option>
+          </select>
+        </div>
+        <div class="form-group form-full">
+          <label for="ingredients">Available Ingredients (optional)</label>
+          <textarea id="ingredients" placeholder="e.g. chicken, broccoli, garlic, olive oil..." rows="2"></textarea>
+        </div>
+        <div class="form-group form-full">
+          <label for="mealNotes">Additional Notes / Preferences</label>
+          <textarea id="mealNotes" placeholder="e.g. low-carb, high-protein, no dairy, kid-friendly..." rows="2"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-primary" id="generateMealBtn" onclick="generateMeal()" aria-label="Generate meal suggestion">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Generate Meal
+        </button>
+        <button class="btn btn-ghost" onclick="resetMealForm()" aria-label="Reset form">Reset</button>
+      </div>
+    </div>
+    <div id="mealResult" style="display:none"></div>
+  </div>
+</section>
+
+<!-- ===== NUTRITION GUIDE SECTION ===== -->
+<section id="section-guide" class="section" aria-label="Nutrition Guide">
+  <div class="guide-section">
+    <div class="section-title">
+      <h2>📚 Nutrition Guide</h2>
+      <p>Click any nutrient card to learn more with a detailed AI-friendly explanation.</p>
+    </div>
+    <div class="guide-grid">
+      <div class="guide-card" onclick="openGuideModal('protein')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('protein')" aria-label="Learn about Protein">
+        <div class="guide-card-icon">💪</div>
+        <h3>Protein</h3>
+        <p>Essential for muscle growth, repair, and many body functions.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('carbohydrates')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('carbohydrates')" aria-label="Learn about Carbohydrates">
+        <div class="guide-card-icon">🌾</div>
+        <h3>Carbohydrates</h3>
+        <p>Your body's primary and preferred source of energy.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('healthy fats')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('healthy fats')" aria-label="Learn about Healthy Fats">
+        <div class="guide-card-icon">🥑</div>
+        <h3>Healthy Fats</h3>
+        <p>Support brain health, hormones, and nutrient absorption.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('fiber')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('fiber')" aria-label="Learn about Fiber">
+        <div class="guide-card-icon">🫘</div>
+        <h3>Fiber</h3>
+        <p>Supports digestion, heart health, and blood sugar balance.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('vitamins')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('vitamins')" aria-label="Learn about Vitamins">
+        <div class="guide-card-icon">🍊</div>
+        <h3>Vitamins</h3>
+        <p>Micronutrients vital for immunity, energy, and overall health.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('minerals')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('minerals')" aria-label="Learn about Minerals">
+        <div class="guide-card-icon">⚡</div>
+        <h3>Minerals</h3>
+        <p>Calcium, iron, magnesium, and more for body functions.</p>
+      </div>
+      <div class="guide-card" onclick="openGuideModal('hydration')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openGuideModal('hydration')" aria-label="Learn about Hydration">
+        <div class="guide-card-icon">💧</div>
+        <h3>Hydration</h3>
+        <p>Water is essential for every cell and body system.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROFILE SECTION ===== -->
+<section id="section-profile" class="section" aria-label="Preferences">
+  <div class="profile-section">
+    <div class="profile-card">
+      <h2>🎯 Your Nutrition Preferences</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">These preferences help NutriAI give you more relevant and personalized suggestions. All data stays in your browser.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prefDiet">Dietary Preference</label>
+          <select id="prefDiet">
+            <option value="">No preference</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Pescatarian">Pescatarian</option>
+            <option value="Non-vegetarian">Non-vegetarian</option>
+            <option value="Keto">Keto</option>
+            <option value="Paleo">Paleo</option>
+            <option value="Gluten-free">Gluten-free</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="prefCuisine">Preferred Cuisine</label>
+          <select id="prefCuisine">
+            <option value="">No preference</option>
+            <option value="Indian">Indian</option>
+            <option value="Continental">Continental</option>
+            <option value="Asian">Asian</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Mexican">Mexican</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="prefGoal">Nutrition Goal</label>
+          <select id="prefGoal">
+            <option value="">No specific goal</option>
+            <option value="Weight management">Weight management</option>
+            <option value="Muscle building">Muscle building</option>
+            <option value="Heart health">Heart health</option>
+            <option value="Energy and vitality">Energy and vitality</option>
+            <option value="Gut health">Gut health</option>
+            <option value="Balanced nutrition">Balanced nutrition</option>
+          </select>
+        </div>
+        <div class="form-group form-full">
+          <label for="prefFavorite">Favourite Foods</label>
+          <textarea id="prefFavorite" rows="2" placeholder="e.g. lentils, yogurt, berries, eggs..."></textarea>
+        </div>
+        <div class="form-group form-full">
+          <label for="prefAvoid">Foods to Avoid</label>
+          <textarea id="prefAvoid" rows="2" placeholder="e.g. red meat, fried foods..."></textarea>
+        </div>
+        <div class="form-group form-full">
+          <label for="prefAllergies">Allergies / Intolerances</label>
+          <textarea id="prefAllergies" rows="2" placeholder="e.g. nuts, lactose, gluten..."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveProfile()" aria-label="Save preferences">Save Preferences</button>
+        <button class="btn btn-ghost" onclick="clearProfile()" aria-label="Clear preferences">Clear</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SETTINGS SECTION ===== -->
+<section id="section-settings" class="section" aria-label="Settings">
+  <div class="settings-section">
+    <div style="margin-bottom:1.5rem">
+      <h2 style="font-size:1.4rem;font-weight:700;color:var(--green-dark)">⚙️ Settings</h2>
+      <p style="color:var(--muted);font-size:.9rem">Configure your Groq API key and preferences.</p>
+    </div>
+
+    <!-- API Configuration -->
+    <div class="settings-card">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Groq API Configuration
+      </h3>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label for="apiKeyInput">Groq API Key</label>
+        <div class="api-key-wrap">
+          <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off" aria-label="Groq API Key" spellcheck="false"/>
+          <button class="toggle-key-btn" onclick="toggleKeyVisibility()" aria-label="Toggle API key visibility" title="Show/hide key">👁</button>
+        </div>
+        <div class="security-notice" role="alert">
+          <span>⚠️</span>
+          <span><strong>Security Notice:</strong> For production use, never expose your Groq API key in client-side code. This application runs entirely in your browser — the key is only stored locally. Use a secure backend/proxy for production applications.</span>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label for="modelInput">Model</label>
+        <input type="text" id="modelInput" value="llama3-8b-8192" aria-label="Groq model name"/>
+        <small style="color:var(--muted);font-size:.8rem;margin-top:.25rem;display:block">Default: llama3-8b-8192. Other options: mixtral-8x7b-32768, llama3-70b-8192</small>
+      </div>
+      <div class="checkbox-row" style="margin-bottom:1rem">
+        <input type="checkbox" id="saveKeyCheck" aria-label="Save API key to localStorage"/>
+        <label for="saveKeyCheck">Save API key in localStorage (convenient but less secure)</label>
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem">
+        <button class="btn btn-primary" onclick="saveApiKey()" aria-label="Save API key">Save Key</button>
+        <button class="btn btn-danger" onclick="clearApiKey()" aria-label="Clear saved API key">Clear Key</button>
+        <button class="btn btn-secondary" onclick="testApiConnection()" id="testBtn" aria-label="Test API connection">Test Connection</button>
+      </div>
+      <div id="apiStatus" class="api-status idle" style="display:none" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- Conversation Settings -->
+    <div class="settings-card">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Conversation Settings
+      </h3>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label for="maxTokensInput">Max Response Tokens</label>
+        <input type="number" id="maxTokensInput" value="1024" min="256" max="4096" step="128" aria-label="Maximum response tokens"/>
+        <small style="color:var(--muted);font-size:.8rem;margin-top:.25rem;display:block">Longer responses use more tokens. Range: 256–4096</small>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label for="temperatureInput">Temperature (Creativity)</label>
+        <input type="range" id="temperatureInput" value="0.7" min="0.1" max="1.2" step="0.1" aria-label="AI temperature setting" oninput="document.getElementById('tempValue').textContent=this.value"/>
+        <small style="color:var(--muted);font-size:.8rem;margin-top:.25rem;display:block">Current: <strong id="tempValue">0.7</strong> &nbsp;(lower = more focused, higher = more creative)</small>
+      </div>
+      <button class="btn btn-primary" onclick="saveConversationSettings()" aria-label="Save conversation settings">Save Settings</button>
+    </div>
+
+    <!-- About -->
+    <div class="settings-card">
+      <h3>ℹ️ About NutriAI</h3>
+      <p style="color:var(--muted);font-size:.9rem;line-height:1.7">NutriAI is a browser-based AI nutrition assistant powered by the Groq API. It is designed to provide general nutrition information, meal ideas, and healthy eating guidance.</p>
+      <br>
+      <p style="color:var(--muted);font-size:.9rem;line-height:1.7"><strong>Disclaimer:</strong> NutriAI provides general nutrition information only and does not constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for medical concerns, allergies, or specific health conditions.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===== GUIDE MODAL ===== -->
+<div class="modal-overlay hidden" id="guideModal" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle" onclick="closeGuideModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="guideModalTitle">Loading...</h3>
+      <button class="modal-close" onclick="closeGuideModal()" aria-label="Close guide modal">✕</button>
+    </div>
+    <div class="modal-body" id="guideModalBody">
+      <div style="display:flex;align-items:center;justify-content:center;padding:2rem;gap:1rem;flex-direction:column">
+        <div class="spinner"></div>
+        <span style="color:var(--muted)">Loading information...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+// ============================================================
+// NUTRITION AI AGENT — JAVASCRIPT
+// ============================================================
+
+// ===== STATE =====
+const AppState = {
+  apiKey: '',
+  model: 'llama3-8b-8192',
+  maxTokens: 1024,
+  temperature: 0.7,
+  conversation: [],
+  isSending: false,
+  profile: {}
+};
+
+// ===== SYSTEM PROMPT =====
+const SYSTEM_PROMPT = `You are NutriAI, a friendly and knowledgeable AI Nutrition Assistant. Your role is to:
+
+- Answer general nutrition questions clearly and helpfully
+- Explain nutrition concepts in simple, accessible language
+- Suggest balanced, practical meal ideas based on user preferences
+- Describe nutrients (protein, carbohydrates, fats, fiber, vitamins, minerals)
+- Offer practical tips for healthy eating without being preachy
+- Ask clarifying questions when more context would help
+
+You MUST:
+- Use friendly, encouraging, non-judgmental language
+- Avoid body-shaming language of any kind
+- Never promote extreme dieting, dangerous calorie restriction, or behaviors that could indicate eating disorders
+- Never diagnose medical conditions or prescribe medications
+- Never present general information as a medical diagnosis
+- Clearly state that nutrition values are approximate
+- Recommend consulting a qualified healthcare professional for medical conditions, allergies, severe symptoms, or situations requiring professional care
+- Respect dietary preferences (vegan, vegetarian, etc.) without judgment
+- Keep answers concise and practical unless the user asks for more detail
+
+When suggesting meal ideas, include:
+- A meal name
+- Key ingredients
+- Brief preparation steps
+- Approximate nutrition highlights (clearly labeled as approximate)
+- One or two healthy tips
+
+You may use emojis sparingly to make responses friendly and readable.`;
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  loadProfile();
+  loadConversation();
+  showSection('home');
+});
+
+// ===== NAVIGATION =====
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const section = document.getElementById('section-' + name);
+  if (section) section.classList.add('active');
+  const navLink = document.getElementById('nav-' + name);
+  if (navLink) navLink.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleNav() {
+  const links = document.getElementById('navLinks');
+  const hamburger = document.getElementById('hamburger');
+  const open = links.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', open);
+}
+
+function closeNav() {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').setAttribute('aria-expanded', 'false');
+}
+
+// ===== GROQ API =====
+async function callGroq(messages, { maxTokens, temperature } = {}) {
+  const key = AppState.apiKey;
+  if (!key || key.trim() === '') {
+    throw new Error('NO_API_KEY');
+  }
+
+  const body = {
+    model: AppState.model || 'llama3-8b-8192',
+    messages: messages,
+    temperature: temperature !== undefined ? temperature : AppState.temperature,
+    max_tokens: maxTokens || AppState.maxTokens
+  };
+
+  let response;
+  try {
+    response = await Promise.race([
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify(body)
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 30000))
+    ]);
+  } catch (err) {
+    if (err.message === 'TIMEOUT') throw new Error('TIMEOUT');
+    throw new Error('NETWORK_ERROR');
+  }
+
+  if (response.status === 401) throw new Error('INVALID_KEY');
+  if (response.status === 429) throw new Error('RATE_LIMIT');
+  if (response.status === 500 || response.status === 503) throw new Error('SERVER_ERROR');
+  if (!response.ok) throw new Error(`API_ERROR_${response.status}`);
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('INVALID_RESPONSE');
+  }
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error('EMPTY_RESPONSE');
+  return content;
+}
+
+function getErrorMessage(err) {
+  const map = {
+    'NO_API_KEY': '🔑 No API key found. Please go to Settings and enter your Groq API key.',
+    'INVALID_KEY': '❌ Invalid API key. Please check your key in Settings.',
+    'RATE_LIMIT': '⏳ Rate limit reached. Please wait a moment and try again.',
+    'SERVER_ERROR': '🔧 Groq server error. Please try again in a few moments.',
+    'TIMEOUT': '⌛ Request timed out. Please check your connection and try again.',
+    'NETWORK_ERROR': '🌐 Network error. Please check your internet connection.',
+    'EMPTY_RESPONSE': '🤔 Received an empty response. Please try again.',
+    'INVALID_RESPONSE': '⚠️ Could not read the API response. Please try again.'
+  };
+  return map[err.message] || `⚠️ Something went wrong. Please try again. (${err.message})`;
+}
+
+// ===== CHAT =====
+function sendQuickPrompt(text) {
+  const input = document.getElementById('chatInput');
+  input.value = text;
+  autoResize(input);
+  sendMessage();
+}
+
+function handleChatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+async function sendMessage() {
+  if (AppState.isSending) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) {
+    showToast('Please type a message first.', 'warning');
+    return;
+  }
+
+  input.value = '';
+  autoResize(input);
+
+  // Build message list
+  const userMsg = { role: 'user', content: text };
+  AppState.conversation.push(userMsg);
+
+  // Render user message
+  hideEmpty();
+  appendMessage('user', text);
+
+  // Show typing indicator
+  const typingId = showTyping();
+  setSending(true);
+
+  try {
+    const messages = buildMessages();
+    const aiText = await callGroq(messages);
+    AppState.conversation.push({ role: 'assistant', content: aiText });
+    removeTyping(typingId);
+    appendMessage('ai', aiText);
+    saveConversation();
+  } catch (err) {
+    removeTyping(typingId);
+    const msg = getErrorMessage(err);
+    appendMessage('ai', msg, true);
+    AppState.conversation.pop(); // remove failed user msg context
+  } finally {
+    setSending(false);
+  }
+}
+
+function buildMessages() {
+  const systemContent = buildSystemWithProfile();
+  const msgs = [{ role: 'system', content: systemContent }];
+  // Keep last 20 messages for context
+  const ctx = AppState.conversation.slice(-20);
+  return msgs.concat(ctx);
+}
+
+function buildSystemWithProfile() {
+  let sys = SYSTEM_PROMPT;
+  const p = AppState.profile;
+  const parts = [];
+  if (p.diet) parts.push(`User's dietary preference: ${p.diet}`);
+  if (p.cuisine) parts.push(`Preferred cuisine: ${p.cuisine}`);
+  if (p.goal) parts.push(`Nutrition goal: ${p.goal}`);
+  if (p.favorite) parts.push(`Favourite foods: ${p.favorite}`);
+  if (p.avoid) parts.push(`Foods to avoid: ${p.avoid}`);
+  if (p.allergies) parts.push(`Allergies/intolerances: ${p.allergies}`);
+  if (parts.length > 0) {
+    sys += '\n\n--- USER PREFERENCES ---\n' + parts.join('\n');
+  }
+  return sys;
+}
+
+function setSending(val) {
+  AppState.isSending = val;
+  const btn = document.getElementById('sendBtn');
+  if (btn) btn.disabled = val;
+}
+
+function appendMessage(role, text, isError = false) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = role === 'ai' ? 'avatar ai-avatar' : 'avatar user-avatar';
+  avatar.textContent = role === 'ai' ? '🌿' : '👤';
+  avatar.setAttribute('aria-hidden', 'true');
+
+  const bubbleWrap = document.createElement('div');
+  const bubble = document.createElement('div');
+  bubble.className = 'message-bubble';
+  if (isError) bubble.style.background = '#fee2e2';
+  const content = document.createElement('div');
+  content.className = 'ai-content';
+  content.textContent = text;
+  bubble.appendChild(content);
+
+  const time = document.createElement('div');
+  time.className = 'message-time';
+  time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  bubbleWrap.appendChild(bubble);
+  bubbleWrap.appendChild(time);
+  div.appendChild(avatar);
+  div.appendChild(bubbleWrap);
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chatMessages');
+  const id = 'typing-' + Date.now();
+  const div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = id;
+  div.setAttribute('aria-label', 'NutriAI is thinking');
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar ai-avatar';
+  avatar.textContent = '🌿';
+  avatar.setAttribute('aria-hidden', 'true');
+
+  const dots = document.createElement('div');
+  dots.className = 'typing-dots';
+  dots.innerHTML = '<span></span><span></span><span></span>';
+
+  div.appendChild(avatar);
+  div.appendChild(dots);
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function hideEmpty() {
+  const el = document.getElementById('chatEmpty');
+  if (el) el.style.display = 'none';
+}
+
+function clearChat() {
+  AppState.conversation = [];
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = '';
+  const empty = document.createElement('div');
+  empty.className = 'chat-empty';
+  empty.id = 'chatEmpty';
+  empty.innerHTML = `
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
+      <circle cx="30" cy="30" r="28" fill="#e8f5ec" stroke="#c3e6cc" stroke-width="1.5"/>
+      <path d="M20 35 Q25 20 30 28 Q35 36 40 22" stroke="#2d9a4e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="18" r="4" fill="#2d9a4e" opacity=".7"/>
+    </svg>
+    <h3>Ask NutriAI Anything</h3>
+    <p>Get nutrition advice, meal ideas, and more.<br>Your conversation stays private in this browser session.</p>`;
+  container.appendChild(empty);
+  saveConversation();
+  showToast('Conversation cleared.', 'success');
+}
+
+function newChat() {
+  clearChat();
+}
+
+function saveConversation() {
+  try {
+    sessionStorage.setItem('nutriai_conversation', JSON.stringify(AppState.conversation));
+  } catch {}
+}
+
+function loadConversation() {
+  try {
+    const saved = sessionStorage.getItem('nutriai_conversation');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        AppState.conversation = parsed;
+        hideEmpty();
+        parsed.forEach(msg => {
+          if (msg.role === 'user' || msg.role === 'assistant') {
+            appendMessage(msg.role === 'assistant' ? 'ai' : 'user', msg.content);
+          }
+        });
+      }
+    }
+  } catch {}
+}
+
+// ===== MEAL PLANNER =====
+async function generateMeal() {
+  const btn = document.getElementById('generateMealBtn');
+  const resultDiv = document.getElementById('mealResult');
+
+  const mealType = document.getElementById('mealType').value;
+  const dietType = document.getElementById('dietType').value;
+  const cuisineType = document.getElementById('cuisineType').value;
+  const cookTime = document.getElementById('cookTime').value;
+  const budget = document.getElementById('budget').value;
+  const servings = document.getElementById('servings').value;
+  const ingredients = document.getElementById('ingredients').value.trim();
+  const notes = document.getElementById('mealNotes').value.trim();
+
+  let prompt = `Generate a complete ${mealType} recipe for ${servings} serving(s).\n`;
+  prompt += `Diet: ${dietType}\n`;
+  prompt += `Cuisine: ${cuisineType}\n`;
+  prompt += `Cooking time: ${cookTime}\n`;
+  prompt += `Budget: ${budget}\n`;
+  if (ingredients) prompt += `Available ingredients to include if possible: ${ingredients}\n`;
+  if (notes) prompt += `Additional preferences: ${notes}\n`;
+  prompt += `\nPlease provide:\n1. Meal Name\n2. Ingredients (with quantities)\n3. Step-by-step preparation instructions\n4. Approximate nutrition information per serving (clearly label these as approximate)\n5. Healthy substitutions\n6. Tips and variations\n\nMake the recipe practical and easy to follow.`;
+
+  btn.disabled = true;
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = `<div class="meal-result"><div class="meal-loading"><div class="spinner"></div><p>NutriAI is creating your meal suggestion...</p></div></div>`;
+
+  try {
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: prompt }
+    ];
+    const result = await callGroq(messages, { maxTokens: 1500 });
+    resultDiv.innerHTML = renderMealResult(result, mealType);
+  } catch (err) {
+    resultDiv.innerHTML = `<div class="meal-result"><p style="color:var(--red);padding:1rem">${getErrorMessage(err)}</p></div>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function renderMealResult(text, mealType) {
+  const escaped = escapeHtml(text);
+  const html = escaped
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^#{1,3}\s(.+)$/gm, '<h4>$1</h4>')
+    .replace(/^[\*\-]\s(.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, m => '<ul>' + m + '</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  return `<div class="meal-result">
+    <div class="meal-result-header">
+      <h3>🍽️ Your ${mealType} Suggestion</h3>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-secondary" onclick="generateMeal()" aria-label="Regenerate meal">Regenerate</button>
+        <button class="btn btn-ghost" onclick="copyMealResult()" aria-label="Copy meal to clipboard">Copy</button>
+      </div>
+    </div>
+    <div class="meal-result-content"><p>${html}</p></div>
+    <p style="font-size:.8rem;color:var(--muted);margin-top:1rem;border-top:1px solid var(--border);padding-top:.75rem">⚠️ Nutrition values are approximate estimates. Consult a registered dietitian for precise nutritional advice.</p>
+  </div>`;
+}
+
+function copyMealResult() {
+  const el = document.querySelector('.meal-result-content');
+  if (!el) return;
+  navigator.clipboard.writeText(el.innerText).then(() => showToast('Meal copied to clipboard!', 'success')).catch(() => showToast('Could not copy text.', 'error'));
+}
+
+function resetMealForm() {
+  document.getElementById('mealType').value = 'Dinner';
+  document.getElementById('dietType').value = 'No preference';
+  document.getElementById('cuisineType').value = 'Any';
+  document.getElementById('cookTime').value = 'No preference';
+  document.getElementById('budget').value = 'No preference';
+  document.getElementById('servings').value = '2';
+  document.getElementById('ingredients').value = '';
+  document.getElementById('mealNotes').value = '';
+  document.getElementById('mealResult').style.display = 'none';
+}
+
+// ===== NUTRITION GUIDE MODAL =====
+const guideContent = {
+  protein: {
+    title: '💪 Protein',
+    content: `<p>Protein is one of the three essential macronutrients and is often called the building block of life.</p>
+<h4>What does protein do?</h4>
+<ul><li>Builds and repairs muscles, tissues, and organs</li><li>Produces enzymes, hormones, and antibodies</li><li>Supports immune function</li><li>Provides energy (4 kcal per gram, though this is not its primary role)</li></ul>
+<h4>Good sources of protein</h4>
+<ul><li><strong>Animal:</strong> Chicken, fish, eggs, dairy, lean beef, turkey</li><li><strong>Plant-based:</strong> Lentils, chickpeas, tofu, tempeh, edamame, quinoa, nuts, seeds</li></ul>
+<h4>How much do you need?</h4>
+<p>General guidance suggests approximately 0.8–1.2g per kilogram of body weight for most adults, though active individuals and athletes may need more. These are approximate values — a registered dietitian can give you personalized guidance.</p>
+<h4>Tips</h4>
+<ul><li>Spread protein intake throughout the day</li><li>Combine plant proteins for a complete amino acid profile</li><li>Choose lean or low-saturated-fat sources where possible</li></ul>`
+  },
+  carbohydrates: {
+    title: '🌾 Carbohydrates',
+    content: `<p>Carbohydrates are your body's primary and preferred source of energy — they are not the enemy!</p>
+<h4>Types of carbohydrates</h4>
+<ul><li><strong>Simple carbs:</strong> Sugars found in fruit (fructose), milk (lactose), and added sugars</li><li><strong>Complex carbs:</strong> Starches and fiber found in whole grains, legumes, and vegetables</li></ul>
+<h4>Why you need them</h4>
+<ul><li>Fuel the brain and nervous system</li><li>Power muscles during exercise</li><li>Support gut health (especially fiber-rich carbs)</li></ul>
+<h4>Quality matters</h4>
+<ul><li>Choose <strong>whole grains</strong> over refined grains where possible</li><li>Prioritise vegetables, fruits, and legumes</li><li>Minimize ultra-processed, high-added-sugar foods</li></ul>
+<h4>Good sources</h4>
+<ul><li>Brown rice, oats, quinoa, whole wheat bread</li><li>Potatoes, sweet potatoes, corn</li><li>All vegetables and fruits</li><li>Lentils, beans, chickpeas</li></ul>`
+  },
+  'healthy fats': {
+    title: '🥑 Healthy Fats',
+    content: `<p>Fats are essential for health — the key is the type of fat you choose.</p>
+<h4>Types of fats</h4>
+<ul><li><strong>Unsaturated fats (healthy):</strong> Mono- and polyunsaturated fats — found in avocados, nuts, seeds, olive oil, fatty fish</li><li><strong>Saturated fats:</strong> Found in red meat and full-fat dairy — fine in moderation</li><li><strong>Trans fats:</strong> Artificially produced — best minimized or avoided</li></ul>
+<h4>Why fats matter</h4>
+<ul><li>Support brain health and cognitive function</li><li>Help absorb fat-soluble vitamins (A, D, E, K)</li><li>Regulate hormones</li><li>Provide sustained energy (9 kcal per gram)</li><li>Support cell membrane structure</li></ul>
+<h4>Great sources of healthy fats</h4>
+<ul><li>Avocado and avocado oil</li><li>Extra virgin olive oil</li><li>Fatty fish (salmon, mackerel, sardines)</li><li>Nuts (walnuts, almonds, cashews)</li><li>Seeds (flaxseed, chia, hemp)</li></ul>`
+  },
+  fiber: {
+    title: '🫘 Fiber',
+    content: `<p>Fiber is a type of carbohydrate that your body cannot fully digest — and that's exactly what makes it so beneficial!</p>
+<h4>Types of fiber</h4>
+<ul><li><strong>Soluble fiber:</strong> Dissolves in water, slows digestion, helps manage blood sugar and cholesterol</li><li><strong>Insoluble fiber:</strong> Adds bulk to stool, promotes regular bowel movements</li></ul>
+<h4>Benefits of fiber</h4>
+<ul><li>Supports healthy digestion and gut microbiome</li><li>Helps maintain steady blood sugar levels</li><li>Supports heart health by reducing LDL cholesterol</li><li>Promotes feelings of fullness</li><li>May reduce risk of certain chronic conditions</li></ul>
+<h4>Good sources</h4>
+<ul><li>Vegetables (especially leafy greens, broccoli, carrots)</li><li>Fruits (berries, apples, pears, oranges)</li><li>Legumes (lentils, beans, chickpeas)</li><li>Whole grains (oats, barley, brown rice)</li><li>Nuts and seeds</li></ul>
+<h4>How much?</h4>
+<p>Most adults benefit from approximately 25–38g of fiber per day, though individual needs vary. Increase intake gradually and drink plenty of water.</p>`
+  },
+  vitamins: {
+    title: '🍊 Vitamins',
+    content: `<p>Vitamins are organic micronutrients that your body needs in small amounts to function properly.</p>
+<h4>Fat-soluble vitamins (stored in the body)</h4>
+<ul><li><strong>Vitamin A:</strong> Vision, immune function — carrots, sweet potato, spinach</li><li><strong>Vitamin D:</strong> Bone health, immune function — sunlight, fatty fish, fortified foods</li><li><strong>Vitamin E:</strong> Antioxidant — nuts, seeds, vegetable oils</li><li><strong>Vitamin K:</strong> Blood clotting, bone health — leafy greens</li></ul>
+<h4>Water-soluble vitamins (not stored, need regular intake)</h4>
+<ul><li><strong>Vitamin C:</strong> Immune support, collagen — citrus, bell peppers, kiwi</li><li><strong>B Vitamins:</strong> Energy metabolism, brain function — whole grains, eggs, dairy, meat, legumes</li><li><strong>Folate/B9:</strong> Cell division, particularly important in pregnancy — leafy greens, legumes</li><li><strong>B12:</strong> Nerve function, red blood cells — animal products (vegans may need supplements)</li></ul>
+<p><em>A varied, colourful diet rich in whole foods generally provides most vitamins. Consult a healthcare professional before taking supplements.</em></p>`
+  },
+  minerals: {
+    title: '⚡ Minerals',
+    content: `<p>Minerals are inorganic elements essential for many body processes.</p>
+<h4>Key minerals and their roles</h4>
+<ul>
+<li><strong>Calcium:</strong> Bone and teeth strength — dairy, tofu, leafy greens, fortified plant milks</li>
+<li><strong>Iron:</strong> Oxygen transport in blood — red meat, spinach, lentils, fortified cereals (pair plant iron with vitamin C for better absorption)</li>
+<li><strong>Magnesium:</strong> Muscle and nerve function, energy — nuts, seeds, whole grains, leafy greens</li>
+<li><strong>Potassium:</strong> Heart and muscle function, blood pressure — bananas, potatoes, legumes, yogurt</li>
+<li><strong>Zinc:</strong> Immune function, wound healing — meat, shellfish, legumes, seeds</li>
+<li><strong>Sodium:</strong> Fluid balance, nerve function — most people get enough; excess from processed foods can raise blood pressure</li>
+<li><strong>Iodine:</strong> Thyroid function — iodized salt, seafood, dairy</li>
+<li><strong>Selenium:</strong> Antioxidant, thyroid health — Brazil nuts, fish, eggs</li>
+</ul>
+<p><em>Eating a varied diet rich in whole foods helps ensure adequate mineral intake. If you have specific concerns, a healthcare professional can check your levels.</em></p>`
+  },
+  hydration: {
+    title: '💧 Hydration',
+    content: `<p>Water is the most essential nutrient. Every cell, tissue, and organ in your body needs water to function.</p>
+<h4>Why hydration matters</h4>
+<ul><li>Regulates body temperature</li><li>Transports nutrients and oxygen to cells</li><li>Flushes out waste products</li><li>Supports kidney function</li><li>Lubricates joints</li><li>Supports digestion</li><li>Affects energy levels and concentration</li></ul>
+<h4>How much water?</h4>
+<p>A common general guideline is approximately 2–2.5 litres (8 cups) per day for adults, though needs vary based on body size, activity level, climate, and health status. These are approximate figures.</p>
+<h4>Tips for staying hydrated</h4>
+<ul><li>Carry a water bottle with you</li><li>Drink a glass of water with each meal</li><li>Eat water-rich foods (cucumber, watermelon, oranges, celery)</li><li>Monitor urine colour — pale yellow is generally a good sign</li><li>Increase intake during exercise and hot weather</li></ul>
+<h4>Other hydrating drinks</h4>
+<ul><li>Herbal teas, infused water</li><li>Milk and plant-based milks</li><li>Broths and soups</li></ul>
+<p><em>Sugary drinks, excessive caffeine, and alcohol can affect hydration — water remains the best choice.</em></p>`
+  }
+};
+
+function openGuideModal(topic) {
+  const modal = document.getElementById('guideModal');
+  const title = document.getElementById('guideModalTitle');
+  const body = document.getElementById('guideModalBody');
+  const data = guideContent[topic];
+  if (data) {
+    title.textContent = data.title;
+    body.innerHTML = data.content;
+  } else {
+    title.textContent = 'Information';
+    body.innerHTML = '<p>Information not available.</p>';
+  }
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  const closeBtn = modal.querySelector('.modal-close');
+  if (closeBtn) closeBtn.focus();
+}
+
+function closeGuideModal(e) {
+  if (e && e.target !== document.getElementById('guideModal')) return;
+  document.getElementById('guideModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('guideModal').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+});
+
+// ===== SETTINGS =====
+function loadSettings() {
+  const savedKey = localStorage.getItem('nutriai_api_key');
+  const savedModel = localStorage.getItem('nutriai_model');
+  const savedMaxTokens = localStorage.getItem('nutriai_max_tokens');
+  const savedTemp = localStorage.getItem('nutriai_temperature');
+
+  if (savedKey) {
+    AppState.apiKey = savedKey;
+    const keyInput = document.getElementById('apiKeyInput');
+    if (keyInput) keyInput.value = savedKey;
+    const saveCheck = document.getElementById('saveKeyCheck');
+    if (saveCheck) saveCheck.checked = true;
+  }
+  if (savedModel) {
+    AppState.model = savedModel;
+    const modelInput = document.getElementById('modelInput');
+    if (modelInput) modelInput.value = savedModel;
+  }
+  if (savedMaxTokens) {
+    AppState.maxTokens = parseInt(savedMaxTokens);
+    const tokensInput = document.getElementById('maxTokensInput');
+    if (tokensInput) tokensInput.value = savedMaxTokens;
+  }
+  if (savedTemp) {
+    AppState.temperature = parseFloat(savedTemp);
+    const tempInput = document.getElementById('temperatureInput');
+    const tempValue = document.getElementById('tempValue');
+    if (tempInput) tempInput.value = savedTemp;
+    if (tempValue) tempValue.textContent = savedTemp;
+  }
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  const saveCheck = document.getElementById('saveKeyCheck').checked;
+
+  if (!key) {
+    showToast('Please enter an API key.', 'warning');
+    return;
+  }
+  if (!key.startsWith('gsk_')) {
+    showToast('Groq API keys usually start with "gsk_". Please double-check your key.', 'warning');
+  }
+
+  AppState.apiKey = key;
+  if (saveCheck) {
+    localStorage.setItem('nutriai_api_key', key);
+    showToast('API key saved to localStorage.', 'success');
+  } else {
+    localStorage.removeItem('nutriai_api_key');
+    showToast('API key saved for this session only.', 'success');
+  }
+}
+
+function clearApiKey() {
+  localStorage.removeItem('nutriai_api_key');
+  AppState.apiKey = '';
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('saveKeyCheck').checked = false;
+  const status = document.getElementById('apiStatus');
+  status.style.display = 'none';
+  showToast('API key cleared.', 'success');
+}
+
+function toggleKeyVisibility() {
+  const input = document.getElementById('apiKeyInput');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function testApiConnection() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) {
+    showToast('Please enter an API key first.', 'warning');
+    return;
+  }
+
+  AppState.apiKey = key;
+  const model = document.getElementById('modelInput').value.trim() || 'llama3-8b-8192';
+  AppState.model = model;
+
+  const btn = document.getElementById('testBtn');
+  const status = document.getElementById('apiStatus');
+  btn.disabled = true;
+  btn.textContent = 'Testing...';
+  status.style.display = 'none';
+
+  try {
+    await callGroq([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'Reply with exactly one word: "connected"' }
+    ], { maxTokens: 10 });
+    status.className = 'api-status success';
+    status.textContent = '✓ API connection successful';
+    status.style.display = 'flex';
+    showToast('API connection successful!', 'success');
+  } catch (err) {
+    status.className = 'api-status error';
+    status.textContent = '✕ ' + getErrorMessage(err);
+    status.style.display = 'flex';
+    showToast('Connection failed. Check your API key.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Test Connection';
+  }
+}
+
+function saveConversationSettings() {
+  const model = document.getElementById('modelInput').value.trim();
+  const maxTokens = parseInt(document.getElementById('maxTokensInput').value);
+  const temp = parseFloat(document.getElementById('temperatureInput').value);
+
+  if (!model) { showToast('Please enter a model name.', 'warning'); return; }
+  if (isNaN(maxTokens) || maxTokens < 256 || maxTokens > 4096) { showToast('Max tokens must be between 256 and 4096.', 'warning'); return; }
+  if (isNaN(temp) || temp < 0.1 || temp > 1.2) { showToast('Temperature must be between 0.1 and 1.2.', 'warning'); return; }
+
+  AppState.model = model;
+  AppState.maxTokens = maxTokens;
+  AppState.temperature = temp;
+  localStorage.setItem('nutriai_model', model);
+  localStorage.setItem('nutriai_max_tokens', maxTokens);
+  localStorage.setItem('nutriai_temperature', temp);
+  showToast('Settings saved.', 'success');
+}
+
+// ===== PROFILE =====
+function saveProfile() {
+  AppState.profile = {
+    diet: document.getElementById('prefDiet').value,
+    cuisine: document.getElementById('prefCuisine').value,
+    goal: document.getElementById('prefGoal').value,
+    favorite: document.getElementById('prefFavorite').value.trim(),
+    avoid: document.getElementById('prefAvoid').value.trim(),
+    allergies: document.getElementById('prefAllergies').value.trim()
+  };
+  try {
+    localStorage.setItem('nutriai_profile', JSON.stringify(AppState.profile));
+  } catch {}
+  showToast('Preferences saved!', 'success');
+}
+
+function clearProfile() {
+  AppState.profile = {};
+  ['prefDiet','prefCuisine','prefGoal'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['prefFavorite','prefAvoid','prefAllergies'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  localStorage.removeItem('nutriai_profile');
+  showToast('Preferences cleared.', 'success');
+}
+
+function loadProfile() {
+  try {
+    const saved = localStorage.getItem('nutriai_profile');
+    if (saved) {
+      const p = JSON.parse(saved);
+      AppState.profile = p;
+      if (p.diet) { const el = document.getElementById('prefDiet'); if (el) el.value = p.diet; }
+      if (p.cuisine) { const el = document.getElementById('prefCuisine'); if (el) el.value = p.cuisine; }
+      if (p.goal) { const el = document.getElementById('prefGoal'); if (el) el.value = p.goal; }
+      if (p.favorite) { const el = document.getElementById('prefFavorite'); if (el) el.value = p.favorite; }
+      if (p.avoid) { const el = document.getElementById('prefAvoid'); if (el) el.value = p.avoid; }
+      if (p.allergies) { const el = document.getElementById('prefAllergies'); if (el) el.value = p.allergies; }
+    }
+  } catch {}
+}
+
+// ===== TOAST =====
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toast.setAttribute('role', 'status');
+  container.appendChild(toast);
+  requestAnimationFrame(() => { requestAnimationFrame(() => { toast.classList.add('show'); }); });
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
+}
+
+// ===== UTILITIES =====
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+</script>
+
+</body>
+</html>
